@@ -3,9 +3,9 @@
 	========================
 
 	@file      : ColorPicker.js
-	@version   : 1.0
+	@version   : 1.1
 	@author    : Ivo Sturm
-	@date      : 1-9-2015
+	@date      : 25-6-2016
 	@copyright : First Consulting
 	@license   : free
 
@@ -16,10 +16,10 @@
 	
 	Add a color picker to your dataview.
 	
-	20150706 - Fixed issue with Mendix 5.16.0. There was a dependency with jquery. Added the lines 62 - 64
-	20160625 - Upgraded to Mendix 6 standard and new Widget lifecycle. 
-			   Separated ColorPickerLibrary from main file.
-			   Deleted jQuery from lib. Now supposed to be already available, for instance via index.html
+	20150706 - 	Fixed issue with Mendix 5.16.0. There was a dependency with jquery. Added the lines 62 - 64
+	20160625 -	Upgraded to Mendix 6 standard and new Widget lifecycle. 
+			Separated ColorPickerLibrary from main file.
+			Deleted jQuery from lib. Now supposed to be already available, for instance via index.html
 	
 	Open Issues
 	===========
@@ -56,16 +56,16 @@ define([
 
 		// Parameters configured in the Modeler.
 		Entity                	: '',
-		colorAttribute			: '',
-		horizontal				: false,
-		align					: 'right',
-		inline					: false,
-		format					: 'hex',
-		defaultColor			: '',
-		enableLogging			: false,
+		colorAttribute		: '',
+		horizontal		: false,
+		align			: 'right',
+		inline			: false,
+		format			: 'hex',
+		defaultColor		: '',
+		enableLogging		: false,
 			
 		// Global variables
-		contextObject	: null,
+		contextObject		: null,
 		mxObject		: null,
 		_handles		: null,
 		_contextObj		: null,
