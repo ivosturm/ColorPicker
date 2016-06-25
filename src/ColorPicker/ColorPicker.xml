@@ -54,6 +54,10 @@ iVBORw0KGgoAAAANSUhEUgAAAIAAAAB2CAYAAAAA9ZvPAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
             <category>Appearance</category>
             <description>When new object is created, the color attribute will be set to this color.</description>
     </property>
-  </properties>
+  		<property key="enableLogging" type="boolean" defaultValue="false">
+		  <caption>Enable Logging</caption>
+		  <category>Logging</category>
+		  <description>The boolean can enable/disable logging on this widget for debugging purposes.</description>
+		</property></properties>
 
 </widget>
