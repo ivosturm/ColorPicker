@@ -5,7 +5,7 @@
 	@file      : ColorPicker.js
 	@version   : 1.1
 	@author    : Ivo Sturm
-	@date      : 25-6-2016
+	@date      : 10-10-2016
 	@copyright : First Consulting
 	@license   : free
 
@@ -16,10 +16,11 @@
 	
 	Add a color picker to your dataview.
 	
-	20150706 - 	Fixed issue with Mendix 5.16.0. There was a dependency with jquery. Added the lines 62 - 64
-	20160625 -	Upgraded to Mendix 6 standard and new Widget lifecycle. 
-			Separated ColorPickerLibrary from main file.
-			Deleted jQuery from lib. Now supposed to be already available, for instance via index.html
+	20150706 - Fixed issue with Mendix 5.16.0. There was a dependency with jquery. Added the lines 62 - 64
+	20160625 - Upgraded to Mendix 6 standard and new Widget lifecycle. 
+			   Separated ColorPickerLibrary from main file.
+			   Deleted jQuery from lib. Now supposed to be already available, for instance via index.html
+	20161010 - Added jQuery and now declared it for local use in this widget only.
 	
 	Open Issues
 	===========
@@ -27,9 +28,13 @@
 
 */
 
-dojo.require("ColorPicker.widget.lib.ColorPickerLibrary");
-
-define([
+require({
+    packages: [
+        { name: 'jquery', location: '../../widgets/ColorPicker/widget/lib', main: 'jquery-1-10-2' },
+        { name: 'colorpicker', location: '../../widgets/ColorPicker/widget/lib', main: 'ColorPickerLibrary'}
+		
+    ]
+},[
     "dojo/_base/declare",
 	"dojo/NodeList-traverse",
     "mxui/widget/_WidgetBase",
@@ -44,10 +49,13 @@ define([
 	"dojo/_base/lang",
 	"dojo/parser",
 	"dojo/_base/array",
-	"dojo/text!ColorPicker/widget/ui/ColorPicker.html"
-]
-, function(declare, NodeList, _WidgetBase,_TemplatedMixin, dom, domStyle, registry,keys, on,ready,domConstruct,dojoLang,parser,dojoArray,widgetTemplate){
+	"dojo/text!ColorPicker/widget/ui/ColorPicker.html",
+	"jquery",
+	"colorpicker"
+], function(declare, NodeList, _WidgetBase,_TemplatedMixin, dom, domStyle, registry,keys, on,ready,domConstruct,dojoLang,parser,dojoArray,widgetTemplate,jquery){
     "use strict";
+	
+	var $ = jquery.noConflict(true);
     // Declare widget's prototype.
     return declare("ColorPicker.widget.ColorPicker", [ _WidgetBase, _TemplatedMixin ], {
         
@@ -76,6 +84,18 @@ define([
 				
 			this.colorPicker = null; 
 			this.colorPickerNode = null;
+			if (this.enableLogging){
+				if (typeof jquery!=='undefined'){
+					console.log("ColorPicker widget: jQuery version: "+ jquery.fn.jquery + " loaded!");
+					if (typeof jquery.fn.colorpicker!=='undefined'){
+						console.log("ColorPicker widget: jQuery extension colorpicker loaded!");
+					} else{
+						console.error("ColorPicker widget: jQuery extension colorpicker could not be loaded!");
+					}
+				} else{
+					console.error("ColorPicker widget: jQuery could not be loaded!");
+				}
+			}
 			
 			dojo.addClass(this.domNode, 'ColorPickerWidget');									// add a class to the widget
 								
