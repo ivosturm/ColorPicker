@@ -3,11 +3,11 @@
 	========================
 
 	@file      : ColorPicker.js
-	@version   : 1.1
+	@version   : 1.3
 	@author    : Ivo Sturm
-	@date      : 10-10-2016
+	@date      : 14-6-2017
 	@copyright : First Consulting
-	@license   : free
+	@license   : Apache V2
 
 	Documentation
 	=============
@@ -21,20 +21,14 @@
 			   Separated ColorPickerLibrary from main file.
 			   Deleted jQuery from lib. Now supposed to be already available, for instance via index.html
 	20161010 - Added jQuery and now declared it for local use in this widget only.
+	20170614 - v1.3 Upgraded to Mendix 7 AMD style;
+					Upgraded jQuery version to 1.11.2; 
+					Added on 'hide picker' microflow;
+					Added 'Disable' option.
 	
-	Open Issues
-	===========
-	None
-
 */
 
-require({
-    packages: [
-        { name: 'jquery', location: '../../widgets/ColorPicker/widget/lib', main: 'jquery-1-10-2' },
-        { name: 'colorpicker', location: '../../widgets/ColorPicker/widget/lib', main: 'ColorPickerLibrary'}
-		
-    ]
-},[
+define([
     "dojo/_base/declare",
 	"dojo/NodeList-traverse",
     "mxui/widget/_WidgetBase",
@@ -50,12 +44,14 @@ require({
 	"dojo/parser",
 	"dojo/_base/array",
 	"dojo/text!ColorPicker/widget/ui/ColorPicker.html",
-	"jquery",
-	"colorpicker"
-], function(declare, NodeList, _WidgetBase,_TemplatedMixin, dom, domStyle, registry,keys, on,ready,domConstruct,dojoLang,parser,dojoArray,widgetTemplate,jquery){
-    "use strict";
+	"ColorPicker/widget/lib/jquery-1-11-2",
+	"ColorPicker/widget/lib/ColorPickerLibrary"
+], function(declare, NodeList, _WidgetBase,_TemplatedMixin, dom, domStyle, registry,keys, on,ready,domConstruct,dojoLang,parser,dojoArray,widgetTemplate,_jQuery){
+    
+	"use strict";
 	
-	var $ = jquery.noConflict(true);
+	var $ = _jQuery.noConflict(true);
+	
     // Declare widget's prototype.
     return declare("ColorPicker.widget.ColorPicker", [ _WidgetBase, _TemplatedMixin ], {
         
@@ -63,17 +59,18 @@ require({
         templateString: widgetTemplate,
 
 		// Parameters configured in the Modeler.
-		Entity                	: '',
-		colorAttribute		: '',
-		horizontal		: false,
-		align			: 'right',
-		inline			: false,
-		format			: 'hex',
-		defaultColor		: '',
-		enableLogging		: false,
+		Entity                	: "",
+		ColorAttribute			: "",
+		horizontal				: false,
+		align					: "right",
+		inline					: false,
+		format					: "hex",
+		defaultColor			: "",
+		enableLogging			: false,
+		_logNode				: "ColorPicker widget: ",
 			
 		// Global variables
-		contextObject		: null,
+		contextObject	: null,
 		mxObject		: null,
 		_handles		: null,
 		_contextObj		: null,
@@ -85,43 +82,42 @@ require({
 			this.colorPicker = null; 
 			this.colorPickerNode = null;
 			if (this.enableLogging){
-				if (typeof jquery!=='undefined'){
-					console.log("ColorPicker widget: jQuery version: "+ jquery.fn.jquery + " loaded!");
-					if (typeof jquery.fn.colorpicker!=='undefined'){
-						console.log("ColorPicker widget: jQuery extension colorpicker loaded!");
+				if (typeof jquery!=="undefined"){
+					console.log(this._logNode + "jQuery version: "+ jquery.fn.jquery + " loaded!");
+					if (typeof jquery.fn.colorpicker!=="undefined"){
+						console.log(this._logNode + "jQuery extension colorpicker loaded!");
 					} else{
-						console.error("ColorPicker widget: jQuery extension colorpicker could not be loaded!");
+						console.error(this._logNode + "jQuery extension colorpicker could not be loaded!");
 					}
 				} else{
-					console.error("ColorPicker widget: jQuery could not be loaded!");
+					console.error(this._logNode + "jQuery could not be loaded!");
 				}
 			}
 			
-			dojo.addClass(this.domNode, 'ColorPickerWidget');									// add a class to the widget
-								
-			this.actLoaded();
-			
-		},
-		
+			dojo.addClass(this.domNode, "ColorPickerWidget");									// add a class to the widget
+									
+		},		
 		// Here we receive the context and use it to retrieve our object. We also subscribe to any commits of the object elsewhere.
 		update : function(obj, callback){
 			if (obj) {
 		
 				this._contextObj = obj;
-
+				
 				this._resetSubscriptions();
 				this._buildColorPicker();					
 
 			}
 			else {
-				console.error("ColorPicker widget: empty context received!")
+				console.error("ColorPicker widget: empty context received!");
 			}
-			typeof(callback) == "function" && callback();
+			if (typeof(callback) == "function") {
+				callback();
+			}
 		},
 		_buildColorPicker : function() {
 			
-			var currentColor = this._contextObj.get(this.colorAttribute);
-			if (currentColor === '' || currentColor === null || currentColor === 'undefined'){
+			var currentColor = this._contextObj.get(this.ColorAttribute);
+			if (currentColor === "" || currentColor === null || currentColor === "undefined"){
 				currentColor = this.defaultColor;
 			}
 			var options = {
@@ -133,18 +129,31 @@ require({
 			};
 			
 			this.colorPicker = $('.colorPickerInstance').colorpicker(options);
-			console.dir(this.colorPicker);
+			
+			// if disabled from Modeler, disable changing colors
+			if (this.disable){
+				this.colorPicker.colorpicker('disable');
+			}
 			
 			// add event listener to changeColor event
 			this.colorPicker.on('changeColor.colorpicker', dojoLang.hitch(this,function (event){
 				var newColor = event.color.toHex();
 
-				// set the attribute to the new value
+				// set the attribute to the new value selected from the color picker menu
 				try{
-					this._contextObj.set(this.colorAttribute,newColor);	
+					this._contextObj.set(this.ColorAttribute,newColor);
+
 				} catch(e){
-					console.log('Error in ColorPicker widget with setAttribute for GUID: ' + this._contextObj.getGuid() + ' Message: ' + e.message);
+					console.log(this._logNode + "Error with setAttribute for GUID: " + this._contextObj.getGuid() + " Message: " + e.message);
 				}	
+			}));
+			
+			// add event listener to changeColor event
+			this.colorPicker.on('hidePicker.colorpicker', dojoLang.hitch(this,function (event){
+				// if on change mf is configured, trigger it with contextobject as input parameter
+				if (this.onChangeMF){
+					this._execMF(this._contextObj);
+				}
 			}));
 
 		},
@@ -166,7 +175,7 @@ require({
                     guid: this._contextObj.getGuid(),
                     callback: dojoLang.hitch(this, function(guid, attr, value) {
                              if (this.enableLogging){
-								  console.log("Object with guid " + guid + " had its attribute " +
+								  console.log(this._logNode + "Object with guid " + guid + " had its attribute " +
 								  attr + " change to " + value);
 							}
 							this._buildColorPicker();
@@ -176,7 +185,7 @@ require({
 							   entity: this.Entity,
 							   callback: dojoLang.hitch(this, function(entity) {
 									if (this.enableLogging){
-									  console.log("Update on entity " + entity);
+									  console.log(this._logNode + "Update on entity " + entity);
 									  console.dir(entity);
 									}
 									this._buildColorPicker();
@@ -194,6 +203,23 @@ require({
               this._handles = [];
           }
         },
+		_execMF : function (obj){
+			// trigger the On Click Microflow. Use mx.ui.action instead of mx.data.action, since in Mx version mx.data.action has a bug in it, not able to find the mxform if a close page action is used..	
+			mx.ui.action(this.onChangeMF,{
+						params:	{
+							applyto: 'selection',
+							guids: [obj.getGuid()]
+
+						},
+						progress: "modal",
+						origin: this.mxform,
+						error: dojoLang.hitch(this,function(error) {
+							console.log(error.description);
+						}),
+						callback: dojoLang.hitch(this,function(result){			
+						})						
+			},this);
+		},
 		uninitialize : function() {
 			this._unsubscribe();
 			var list = dojo.query('.colorpicker');
@@ -209,7 +235,5 @@ require({
 	});
 });
 
-require(["ColorPicker/widget/ColorPicker"], function() {
-    "use strict";
-});		
+require(["ColorPicker/widget/ColorPicker"]);	
 	
