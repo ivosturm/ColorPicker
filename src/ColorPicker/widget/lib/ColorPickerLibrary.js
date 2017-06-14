@@ -1,11 +1,27 @@
-dojo.provide("ColorPicker.widget.lib.ColorPickerLibrary");
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['ColorPicker/widget/lib/jquery-1-11-2'], factory);
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory(require('jquery'));
+    } else {
+        // Browser globals (root is window)
+        root.lightbox = factory(root.jQuery);
+    }
+}(this, function($) {
+    "use strict";
 
-($,function($) {
-	'use strict';
-
-	'{{color}}';
-
-	var defaults = {
+    /*
+     *  Represenets an editor
+     *  @constructor
+     *  @param {DOMNode} element - The TEXTAREA element to add the Wysiwyg to.
+     *  @param {object} userOptions - The default options selected by the user.
+     */
+	 
+	 	var defaults = {
 		horizontal: false, // horizontal mode layout ?
 		inline: false, //forces to show the colorpicker as an inline element
 		color: false, //forces a color
@@ -1047,7 +1063,6 @@ dojo.provide("ColorPicker.widget.lib.ColorPickerLibrary");
 			}
 			return false;
 		}
-	};
+	}
 
-
-})($);
+}));
