@@ -7,27 +7,38 @@ iVBORw0KGgoAAAANSUhEUgAAAIAAAAB2CAYAAAAA9ZvPAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
 </icon>
   <properties>
     <property key="Entity" type="entity">
-      <caption>colorEntity </caption>
+      <caption>Entity </caption>
       <category>Data source</category>
-      <description>The Entity to save.</description>
+      <description>The Entity which holds the color attribute.</description>
     </property>
-	<property key="colorAttribute" type="attribute" entityProperty="Entity">
-      <caption>Attribute</caption>
+	<property key="ColorAttribute" type="attribute" entityProperty="Entity">
+      <caption>Color Attribute</caption>
       <category>Data source</category>
-      <description>The field that holds the hexadecimal colorstring.</description>
+      <description>The attribute that holds the formatted color value.</description>
       <attributeTypes>
         <attributeType name="String"/>
       </attributeTypes>
     </property>
+    <property key="onChangeMF" type="microflow" required="false" defaultValue="" entityProperty="Entity">
+            <caption>On Change Microflow</caption>
+            <category>Interaction</category>
+            <description>Microflow that will be executed when the color picker widget is closed. Takes the Entity chosen in the Data Source tab as input parameter.</description>
+            <returnType type="Void"></returnType>
+    </property>
 	<property key="horizontal" type="boolean" defaultValue="true">
             <caption>Horizontal</caption>
             <category>Appearance</category>
-            <description>If true, the hue and alpha channel bars will be rendered horizontally, above the saturation selector.</description>
+            <description>If set to 'Yes', the hue and alpha channel bars will be rendered horizontally, above the saturation selector.</description>
     </property>
-	<property key="inline" type="boolean" defaultValue="true">
+	<property key="disable" type="boolean" defaultValue="false">
+            <caption>Disable</caption>
+            <category>Appearance</category>
+            <description>If set to 'Yes', the color picker can not be triggered. Typically used in non-editable scenario's.</description>
+    </property>
+	<property key="inline" type="boolean" defaultValue="false">
             <caption>Inline</caption>
             <category>Appearance</category>
-            <description>If true, forces to show the colorpicker as an inline element.</description>
+            <description>If set to 'Yes', forces to show the colorpicker as an inline element.</description>
     </property>
 	<property key="align" type="enumeration" required="true" defaultValue="right">
             <caption>Align</caption>
@@ -41,7 +52,7 @@ iVBORw0KGgoAAAANSUhEUgAAAIAAAAB2CAYAAAAA9ZvPAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
 	<property key="format" type="enumeration" required="true" defaultValue="false">
 		<caption>Format</caption>
 		<category>Appearance</category>
-		<description>If not false, forces the color format to be hex, rgb or rgba, otherwise the format is automatically detected.</description>
+		<description>This setting enforces formats if the chosen format is hex, rgb or rgba. When 'Format' is chosen the format is automatically detected.</description>
 		<enumerationValues>
 			<enumerationValue key="false">False</enumerationValue>
 			<enumerationValue key="hex">Hex</enumerationValue>
@@ -49,10 +60,10 @@ iVBORw0KGgoAAAANSUhEUgAAAIAAAAB2CAYAAAAA9ZvPAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
 			<enumerationValue key="rgb">rgb</enumerationValue>
 		</enumerationValues>
 	</property>
-	<property key="defaultColor" type="string" defaultValue="">
+	<property key="defaultColor" type="string" defaultValue="#00ffff">
             <caption>Default Color</caption>
             <category>Appearance</category>
-            <description>When new object is created, the color attribute will be set to this color.</description>
+            <description>When a new object with empty color attribute is created, the color attribute will be set to this color.</description>
     </property>
   		<property key="enableLogging" type="boolean" defaultValue="false">
 		  <caption>Enable Logging</caption>
