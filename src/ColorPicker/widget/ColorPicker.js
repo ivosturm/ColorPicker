@@ -128,7 +128,7 @@ define([
 				format : this.format
 			};
 			
-			this.colorPicker = $('.colorPickerInstance').colorpicker(options);
+			this.colorPicker = $(this.domNode).colorpicker(options);
 			
 			// if disabled from Modeler, disable changing colors
 			if (this.disable){

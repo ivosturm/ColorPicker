@@ -191,27 +191,10 @@
 			}
 
 			// 20150507 - add colorpicker to widgetnode and fix positioning issue
-			/*this.picker.css({
+			this.picker.css({
 				top: offset.top + element.outerHeight(),
 				left: offset.left
-			});*/
-			var widgetNode = $(".colorPickerInstance")[0];
-			var colorPickerNode = $(".colorpicker-visible")[0];
-			var inputNode = $(".ColorPickerWidget > input")[0];
-			var inputNodeInitialWidth = inputNode.offsetWidth;
-			widgetNode.appendChild(colorPickerNode);
-			var offsetCorrection;
-			if (this.options.align === 'right') {
-				offsetCorrection = widgetNode.offsetWidth - colorPickerNode.offsetWidth;
-			} else if (this.options.align === 'left') {
-				var buttonNode =  $(".ColorPickerWidget > .input-group-addon")[0];
-				offsetCorrection =  widgetNode.offsetWidth - buttonNode.offsetWidth;
-			}
-			colorPickerNode.style.top = '106%';
-			colorPickerNode.style.left = offsetCorrection.toString() + 'px';
-			colorPickerNode.style.position = 'absolute';
-			inputNode.style.width = inputNodeInitialWidth.toString() + 'px';
-			// end of fix	
+			});
 			
 		},
 		show: function(e) {
